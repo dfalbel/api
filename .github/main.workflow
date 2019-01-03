@@ -64,12 +64,8 @@ action "Deploy to GKE" {
   env = {
     PROJECT_ID = "decryptr-196601"
     APPLICATION_NAME = "api"
-    DEPLOYMENT_NAME = "api"
+    DEPLOYMENT_NAME = "decryptr-api"
   }
   runs = "sh -l -c"
-  args = ["SHORT_REF=$(echo ${GITHUB_SHA} | head -c7) && cat $GITHUB_WORKSPACE/config.yml | sed 's/PROJECT_ID/'\"$PROJECT_ID\"'/' | sed 's/APPLICATION_NAME/'\"$APPLICATION_NAME\"'/' | sed 's/TAG/'\"$SHORT_REF\"'/' | kubectl apply -f - "]
+  args = ["kubectl run --image=gcr.io/$PROJECT_ID/$APPLICATION_NAME $DEPLOYMENT_NAME --port=8080"]
 }
-
-
-
-
