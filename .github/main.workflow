@@ -54,7 +54,7 @@ action "Load GKE kube credentials" {
   uses = "actions/gcloud/cli@master"
   env = {
     PROJECT_ID = "decryptr-196601"
-    CLUSTER_NAME = "api"
+    CLUSTER_NAME = "your-first-cluster-1"
   }
   args = "container clusters get-credentials $CLUSTER_NAME --zone us-central1-a --project $PROJECT_ID"
 }
