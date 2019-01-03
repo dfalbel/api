@@ -5,5 +5,5 @@ workflow "Deploy" {
 
 action "Build docker image" {
   uses = "actions/docker/cli@76ff57a"
-  args = "[\"build\", \"-t\", \"api\", \".\"]"
+  args = ["build", "-t", "api", "."]
 }
