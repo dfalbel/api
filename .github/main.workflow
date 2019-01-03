@@ -23,13 +23,13 @@ action "Auth Google" {
 }
 
 action "Set Credential Helper for Docker" {
-  needs = ["Build docker image", "Auth Google"]
+  needs = ["Auth Google"]
   uses = "actions/gcloud/cli@master"
   args = ["auth", "configure-docker", "--quiet"]
 }
 
 action "Tag image for GCR" {
-  needs = ["Auth Google", "Build docker image"]
+  needs = ["Auth Google", "Build docker image", "Set Credential Helper for Docker"]
   uses = "actions/docker/tag@master"
   env = {
     PROJECT_ID = "decryptr-196601"
