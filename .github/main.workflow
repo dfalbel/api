@@ -68,7 +68,7 @@ action "Deploy to GKE" {
     DEPLOYMENT_NAME = "decryptr-api"
   }
   runs = "sh -l -c"
-  args = ["kubectl run --image=gcr.io/$PROJECT_ID/$APPLICATION_NAME $DEPLOYMENT_NAME --port=8080"]
+  args = ["kubectl run --image=gcr.io/$PROJECT_ID/$APPLICATION_NAME $DEPLOYMENT_NAME --port=8080 --force=true --grace-period=0"]
 }
 
 action "Expose service" {
