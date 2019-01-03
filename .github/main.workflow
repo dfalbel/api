@@ -4,7 +4,8 @@ workflow "Deploy" {
     "Build docker image",
     "Auth Google",
     "Tag image for GCR",
-    "Push image to GCR"
+    "Push image to GCR",
+    "Set Credential Helper for Docker"
   ]
 }
 
@@ -18,6 +19,12 @@ action "Auth Google" {
   secrets = ["GCLOUD_AUTH"]
 }
 
+action "Set Credential Helper for Docker" {
+  needs = ["Build docker image", "Auth Google"]
+  uses = "actions/gcloud/cli@master"
+  args = ["auth", "configure-docker", "--quiet"]
+}
+
 action "Tag image for GCR" {
   needs = ["Auth Google", "Build docker image"]
   uses = "actions/docker/tag@master"
@@ -29,7 +36,7 @@ action "Tag image for GCR" {
 }
 
 action "Push image to GCR" {
-  needs = ["Tag image for GCR"]
+  needs = ["Tag image for GCR", "Set Credential Helper for Docker"]
   uses = "actions/gcloud/cli@master"
   runs = "sh -c"
   env = {
