@@ -69,3 +69,13 @@ action "Deploy to GKE" {
   runs = "sh -l -c"
   args = ["kubectl run --image=gcr.io/$PROJECT_ID/$APPLICATION_NAME $DEPLOYMENT_NAME --port=8080"]
 }
+
+action "Expose service" {
+  needs = ["Deploy to GKE"]
+  uses = "docker://gcr.io/cloud-builders/kubectl"
+  env = {
+    DEPLOYMENT_NAME = "decryptr-api"
+  }
+  runs = "sh -l -c"
+  args = ["kubectl expose deployment $DEPLOYMENT_NAME --type LoadBalancer --port 80 --target-port 8080"]
+}
