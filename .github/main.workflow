@@ -5,7 +5,9 @@ workflow "Deploy" {
     "Auth Google",
     "Tag image for GCR",
     "Push image to GCR",
-    "Set Credential Helper for Docker"
+    "Set Credential Helper for Docker",
+    "Load GKE kube credentials",
+    "Deploy to GKE"
   ]
 }
 
@@ -45,3 +47,29 @@ action "Push image to GCR" {
   }
   args = ["docker push gcr.io/$PROJECT_ID/$APPLICATION_NAME"]
 }
+
+action "Load GKE kube credentials" {
+  needs = ["Push image to GCR", "Auth Google"]
+  uses = "actions/gcloud/cli@master"
+  env = {
+    PROJECT_ID = "decryptr-196601"
+    CLUSTER_NAME = "api"
+  }
+  args = "container clusters get-credentials $CLUSTER_NAME --zone us-central1-a --project $PROJECT_ID"
+}
+
+action "Deploy to GKE" {
+  needs = ["Push image to GCR", "Load GKE kube credentials"]
+  uses = "docker://gcr.io/cloud-builders/kubectl"
+  env = {
+    PROJECT_ID = "decryptr-196601"
+    APPLICATION_NAME = "api"
+    DEPLOYMENT_NAME = "api"
+  }
+  runs = "sh -l -c"
+  args = ["SHORT_REF=$(echo ${GITHUB_SHA} | head -c7) && cat $GITHUB_WORKSPACE/config.yml | sed 's/PROJECT_ID/'\"$PROJECT_ID\"'/' | sed 's/APPLICATION_NAME/'\"$APPLICATION_NAME\"'/' | sed 's/TAG/'\"$SHORT_REF\"'/' | kubectl apply -f - "]
+}
+
+
+
+
