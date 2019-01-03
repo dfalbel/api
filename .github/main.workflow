@@ -7,7 +7,8 @@ workflow "Deploy" {
     "Push image to GCR",
     "Set Credential Helper for Docker",
     "Load GKE kube credentials",
-    "Deploy to GKE"
+    "Deploy to GKE",
+    "Expose service"
   ]
 }
 
